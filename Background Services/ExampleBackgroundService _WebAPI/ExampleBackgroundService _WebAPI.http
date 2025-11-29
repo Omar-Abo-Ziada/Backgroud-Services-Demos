@@ -1,0 +1,6 @@
+@ExampleBackgroundService__WebAPI_HostAddress = http://localhost:5187
+
+GET {{ExampleBackgroundService__WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

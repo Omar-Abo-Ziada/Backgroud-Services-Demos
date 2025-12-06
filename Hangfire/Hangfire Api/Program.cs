@@ -1,5 +1,7 @@
 using Hangfire;
 
+using Hangfire_Api.Extensions;
+
 namespace Hangfire_Api;
 
 public class Program
@@ -12,16 +14,10 @@ public class Program
         _ = builder.Services.AddControllers();
         _ = builder.Services.AddOpenApi();
 
-        /// Note: Max Pool Size=200 means SQL connection pool can hold
-        /// up to 200 connections simultaneously. Prevents pool exhaustion
-        /// with many Hangfire workers.
-        _ = builder.Services.AddHangfire(config =>
-            config.UseSqlServerStorage(
-                "Data Source=.;Initial Catalog=Hangfire-DB;" +
-                "Integrated Security=true;Max Pool Size=200;" +
-                "Trust Server Certificate=True;"));
+        _ = builder.Services.RegisterServices();
+        _ = builder.Services.AddHangfireApiServices(builder);
 
-        _ = builder.Services.AddHangfireServer();
+        _ = builder.Services.RegisterDbContext(builder);
 
         WebApplication app = builder.Build();
 
@@ -30,7 +26,6 @@ public class Program
         {
             _ = app.MapOpenApi();
         }
-
         _ = app.UseHttpsRedirection();
         _ = app.UseAuthorization();
         _ = app.MapControllers();
